@@ -17,14 +17,6 @@
 		"template",
 		"TypeScript"
 	],
-	"main": "dist/index.js",
-	"types": "types/index.d.ts",
-	"files": [
-		"dist/",
-		"types/",
-		"*.md",
-		"!*.spec.*"
-	],
 	"scripts": {
 		"format": "prettier --write src",
 		"lint": "eslint \"**/*.{js,ts}\"",
