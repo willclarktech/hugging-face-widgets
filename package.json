@@ -19,7 +19,7 @@
 	],
 	"scripts": {
 		"format": "prettier --write src",
-		"lint": "eslint \"**/*.{js,ts}\"",
+		"lint": "eslint \"**/*.{js,ts,tsx}\"",
 		"test": "jest",
 		"prebuild": "rm -rf dist/",
 		"build": "parcel build src/index.html",
