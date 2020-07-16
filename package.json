@@ -22,7 +22,8 @@
 		"lint": "eslint \"**/*.{js,ts}\"",
 		"test": "jest",
 		"prebuild": "rm -rf dist/",
-		"build": "tsc"
+		"build": "parcel build src/index.html",
+		"start": "parcel src/index.html"
 	},
 	"devDependencies": {
 		"@types/jest": "^25.2.3",
@@ -35,6 +36,7 @@
 		"eslint-plugin-prettier": "^3.1.4",
 		"eslint-plugin-simple-import-sort": "^5.0.3",
 		"jest": "^26.1.0",
+		"parcel": "^1.12.4",
 		"prettier": "^2.0.5",
 		"ts-jest": "^26.1.2",
 		"typescript": "^3.9.6"
