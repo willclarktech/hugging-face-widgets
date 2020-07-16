@@ -21,9 +21,8 @@
 		"format": "prettier --write src",
 		"lint": "eslint \"**/*.{js,ts,tsx}\"",
 		"test": "jest",
-		"prebuild": "rm -rf dist/",
-		"build": "parcel build src/index.html",
-		"postbuild": "rm -r docs && mv dist docs",
+		"prebuild": "rm -rf docs",
+		"build": "parcel build --out-dir docs --public-url /hugging-face-widgets/ src/index.html",
 		"start": "parcel src/index.html"
 	},
 	"devDependencies": {
