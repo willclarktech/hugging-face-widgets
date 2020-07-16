@@ -1,0 +1,50 @@
+{
+	"name": "ts-template",
+	"private": true,
+	"version": "0.0.0",
+	"description": "A template repository for TypeScript projects",
+	"author": "willclarktech <willclarktech@users.noreply.github.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/willclarktech/ts-template.git"
+	},
+	"bugs": {
+		"url": "https://github.com/willclarktech/ts-template/issues"
+	},
+	"homepage": "https://github.com/willclarktech/ts-template#readme",
+	"keywords": [
+		"template",
+		"TypeScript"
+	],
+	"main": "dist/index.js",
+	"types": "types/index.d.ts",
+	"files": [
+		"dist/",
+		"types/",
+		"*.md",
+		"!*.spec.*"
+	],
+	"scripts": {
+		"format": "prettier --write src",
+		"lint": "eslint \"**/*.{js,ts}\"",
+		"test": "jest",
+		"prebuild": "rm -rf dist/",
+		"build": "tsc"
+	},
+	"devDependencies": {
+		"@types/jest": "^25.2.3",
+		"@typescript-eslint/eslint-plugin": "^3.6.1",
+		"@typescript-eslint/parser": "^3.6.1",
+		"eslint": "^7.4.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-import": "^2.22.0",
+		"eslint-plugin-jest": "^23.18.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"eslint-plugin-simple-import-sort": "^5.0.3",
+		"jest": "^26.1.0",
+		"prettier": "^2.0.5",
+		"ts-jest": "^26.1.2",
+		"typescript": "^3.9.6"
+	}
+}
