@@ -23,6 +23,7 @@
 		"test": "jest",
 		"prebuild": "rm -rf dist/",
 		"build": "parcel build src/index.html",
+		"postbuild": "rm -r docs && mv dist docs",
 		"start": "parcel src/index.html"
 	},
 	"devDependencies": {
