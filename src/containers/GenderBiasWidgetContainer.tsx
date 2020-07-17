@@ -14,8 +14,8 @@ const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface GenderBiasWidgetContainerProps {}
-interface GenderBiasWidgetContainerState {
+interface Props {}
+interface State {
 	readonly text: string;
 	readonly model: string;
 	readonly errorMessage: string | null;
@@ -23,13 +23,10 @@ interface GenderBiasWidgetContainerState {
 	readonly loading: boolean;
 }
 
-class GenderBiasWidgetContainer extends Component<
-	GenderBiasWidgetContainerProps,
-	GenderBiasWidgetContainerState
-> {
+class GenderBiasWidgetContainer extends Component<Props, State> {
 	private models: readonly string[];
 
-	constructor(props: GenderBiasWidgetContainerProps) {
+	constructor(props: Props) {
 		super(props);
 		this.state = {
 			text: "The coding interview went really well. We gave her the job.",

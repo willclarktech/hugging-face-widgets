@@ -6,7 +6,7 @@ import { Alert, Button, Form } from "react-bootstrap";
 import { mask } from "../utils";
 import InferenceComponent, { InferenceResult } from "./Inference";
 
-interface GenderBiasWidgetProps {
+interface Props {
 	readonly models: readonly string[];
 	readonly text: string;
 	readonly loading: boolean;
@@ -26,7 +26,7 @@ const GenderBiasWidget = ({
 	onTextChange: handleTextChange,
 	onModelChange: handleModelChange,
 	onSubmit,
-}: GenderBiasWidgetProps): JSX.Element => {
+}: Props): JSX.Element => {
 	const maskedText = mask(text).replace(/<mask>/gi, "❓");
 	return (
 		<div className="gender-bias-widget">
