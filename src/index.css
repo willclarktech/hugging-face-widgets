@@ -1,7 +1,32 @@
 body {
 	height: 100vh;
 	width: 100%;
-	color: green;
-	background-color: black;
-	font-size: 20px;
+
+	margin: 0;
+	padding: 24px;
+
+	color: white;
+	background: rgb(214, 97, 148);
+	background: linear-gradient(
+		90deg,
+		rgba(214, 97, 148, 1) 0%,
+		rgba(103, 163, 235, 1) 100%
+	);
+	background-repeat: repeat-y;
+
+	font-family: "Lucida Grande";
+	font-size: 18px;
+}
+
+h1 {
+	margin: 0;
+	padding-top: 50px;
+	padding-bottom: 20px;
+
+	font-style: bold;
+}
+
+h2 {
+	padding-top: 30px;
+	padding-bottom: 15px;
 }

@@ -1,6 +1,7 @@
 import "./GenderBiasWidget.css";
 
 import React, { ChangeEvent, FormEvent } from "react";
+import { Alert, Button, Form } from "react-bootstrap";
 
 import { mask } from "../utils";
 import InferenceComponent, { InferenceResult } from "./Inference";
@@ -19,7 +20,7 @@ interface GenderBiasWidgetProps {
 const GenderBiasWidget = ({
 	models,
 	text,
-	loading,
+	// loading,
 	results,
 	errorMessage,
 	onTextChange: handleTextChange,
@@ -30,45 +31,45 @@ const GenderBiasWidget = ({
 	return (
 		<div className="gender-bias-widget">
 			<h1>{"Let’s play... how sexist is that model??"}</h1>
-			<form onSubmit={onSubmit}>
-				<label>
-					{"Select the model"}
-					<br />
-					<select name="model" onChange={handleModelChange}>
+			<Form onSubmit={onSubmit}>
+				<Form.Group>
+					<Form.Label>{"Select the model:"}</Form.Label>
+					<Form.Control as="select" name="model" onChange={handleModelChange}>
 						{models.map((model) => (
 							<option key={model} value={model}>
 								{model}
 							</option>
 						))}
-					</select>
-				</label>
-				<br />
-				<label>
-					{
-						'Type a gendered sentence here (a sentence which uses a word like "his" or "she"):'
-					}
-					<br />
-					<input type="text" value={text} onChange={handleTextChange} />
-				</label>
-				<br />
-				{
-					"We’re going to hide the gendered word and see what the model predicts is behind the blank:"
-				}
-				<input type="text" value={maskedText} disabled={true} />
-				<br />
-				<button type="submit">Check</button>
-			</form>
-			{loading && <h2>Loading...</h2>}
+					</Form.Control>
+				</Form.Group>
+				<Form.Group>
+					<Form.Label>
+						{
+							'Type a gendered sentence here (a sentence which uses a word like "his" or "she"):'
+						}
+					</Form.Label>
+					<Form.Control type="text" value={text} onChange={handleTextChange} />
+				</Form.Group>
+				<Form.Group>
+					<Form.Label>
+						{
+							"We’re going to hide the gendered word and see what the model predicts is behind the blank:"
+						}
+					</Form.Label>
+					<Form.Control type="text" value={maskedText} disabled={true} />
+				</Form.Group>
+				<Button variant="dark" type="submit">
+					Check
+				</Button>
+			</Form>
+			{/* {loading && <Alert variant="info">{"Loading..."}</Alert>} */}
 			{errorMessage && (
-				<div>
-					<h2>Error</h2>
-					<p>{errorMessage}</p>
-				</div>
+				<Alert variant="danger">{`Error: ${errorMessage}`}</Alert>
 			)}
 			{results && (
 				<div>
-					<h2>Results</h2>
-					<ul>{results.map(InferenceComponent)}</ul>
+					<h2>{"Our model suggests..."}</h2>
+					<ol>{results.map(InferenceComponent)}</ol>
 				</div>
 			)}
 		</div>

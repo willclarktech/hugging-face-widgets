@@ -1,7 +1,7 @@
-.gender-bias-widget input {
-	width: 100%;
+.gender-bias-widget ol {
+	list-style: none;
 }
 
-.gender-bias-widget ul {
-	list-style: none;
+.gender-bias-widget form {
+	margin-bottom: 20px;
 }
