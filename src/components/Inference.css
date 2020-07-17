@@ -1,0 +1,14 @@
+.inference::before {
+	display: inline-block;
+	text-align: center;
+	content: " ";
+	width: 50px;
+}
+
+.inference.female::before {
+	content: "🙋‍♀️ ";
+}
+
+.inference.male::before {
+	content: "🙋‍♂️ ";
+}
