@@ -14,19 +14,16 @@ body {
 	);
 	background-repeat: repeat-y;
 
-	font-family: "Lucida Grande";
+	font-family: "Open Sans", "Lucida Grande", sans-serif;
 	font-size: 18px;
 }
 
 h1 {
-	margin: 0;
-	padding-top: 50px;
-	padding-bottom: 20px;
-
-	font-style: bold;
+	font-family: Futura, "Lucida Grande", sans-serif;
+	font-weight: bold;
 }
 
 h2 {
-	padding-top: 30px;
-	padding-bottom: 15px;
+	font-family: Futura, "Lucida Grande", sans-serif;
+	font-weight: bold;
 }

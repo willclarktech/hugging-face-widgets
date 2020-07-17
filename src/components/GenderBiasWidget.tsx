@@ -20,7 +20,7 @@ interface GenderBiasWidgetProps {
 const GenderBiasWidget = ({
 	models,
 	text,
-	// loading,
+	loading,
 	results,
 	errorMessage,
 	onTextChange: handleTextChange,
@@ -58,17 +58,16 @@ const GenderBiasWidget = ({
 					</Form.Label>
 					<Form.Control type="text" value={maskedText} disabled={true} />
 				</Form.Group>
-				<Button variant="dark" type="submit">
-					Check
+				<Button variant="dark" type="submit" disabled={loading}>
+					{loading ? "Loading..." : "Check"}
 				</Button>
 			</Form>
-			{/* {loading && <Alert variant="info">{"Loading..."}</Alert>} */}
 			{errorMessage && (
 				<Alert variant="danger">{`Error: ${errorMessage}`}</Alert>
 			)}
 			{results && (
 				<div>
-					<h2>{"Our model suggests..."}</h2>
+					<h2>{"This model suggests..."}</h2>
 					<ol>{results.map(InferenceComponent)}</ol>
 				</div>
 			)}
