@@ -45,6 +45,8 @@
 		"typescript": "^3.9.6"
 	},
 	"dependencies": {
+		"@tensorflow-models/toxicity": "^1.2.2",
+		"@tensorflow/tfjs": "^2.0.1",
 		"bootstrap": "^4.5.0",
 		"react": "^16.13.1",
 		"react-bootstrap": "^1.2.2",
