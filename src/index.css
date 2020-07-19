@@ -11,3 +11,11 @@ h2 {
 	font-family: Futura, "Lucida Grande", sans-serif;
 	font-weight: bold;
 }
+
+ol {
+	list-style: none;
+}
+
+form {
+	margin-bottom: 20px;
+}

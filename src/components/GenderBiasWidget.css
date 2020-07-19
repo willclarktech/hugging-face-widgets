@@ -9,11 +9,3 @@
 		rgba(103, 163, 235, 1) 100%
 	);
 }
-
-.gender-bias-widget ol {
-	list-style: none;
-}
-
-.gender-bias-widget form {
-	margin-bottom: 20px;
-}
