@@ -25,13 +25,13 @@ const GenderBiasWidget = ({
 	errorMessage,
 	onTextChange: handleTextChange,
 	onModelChange: handleModelChange,
-	onSubmit,
+	onSubmit: handleSubmit,
 }: Props): JSX.Element => {
 	const maskedText = mask(text).replace(/<mask>/gi, "❓");
 	return (
 		<div className="gender-bias-widget">
 			<h1>{"Let’s play... how sexist is that model??"}</h1>
-			<Form onSubmit={onSubmit}>
+			<Form onSubmit={handleSubmit}>
 				<Form.Group>
 					<Form.Label>{"Select the model:"}</Form.Label>
 					<Form.Control as="select" name="model" onChange={handleModelChange}>
