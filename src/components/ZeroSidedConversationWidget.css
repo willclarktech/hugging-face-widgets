@@ -1,0 +1,24 @@
+.zero-sided-conversation-widget {
+	min-height: 100vh;
+	padding: 48px;
+
+	background: rgb(255, 113, 0);
+}
+
+.client::before {
+	width: 70px;
+	display: inline-block;
+	text-align: center;
+
+	content: "client";
+	background: blue;
+}
+
+.server::before {
+	width: 70px;
+	display: inline-block;
+	text-align: center;
+
+	content: "server:";
+	background: red;
+}
