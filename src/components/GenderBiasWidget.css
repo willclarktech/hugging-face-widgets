@@ -1,3 +1,15 @@
+.gender-bias-widget {
+	min-height: 100vh;
+	padding: 48px;
+
+	background: rgb(214, 97, 148);
+	background-image: linear-gradient(
+		90deg,
+		rgba(214, 97, 148, 1) 0%,
+		rgba(103, 163, 235, 1) 100%
+	);
+}
+
 .gender-bias-widget ol {
 	list-style: none;
 }

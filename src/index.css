@@ -1,28 +1,12 @@
 body {
-	min-height: 100vh;
-	width: 100%;
-
-	margin: 0;
-	padding: 48px;
-
 	color: white;
-	background: rgb(214, 97, 148);
-	background: linear-gradient(
-		90deg,
-		rgba(214, 97, 148, 1) 0%,
-		rgba(103, 163, 235, 1) 100%
-	);
-	background-repeat: repeat-y;
+	background-color: black;
 
 	font-family: "Open Sans", "Lucida Grande", sans-serif;
 	font-size: 18px;
 }
 
-h1 {
-	font-family: Futura, "Lucida Grande", sans-serif;
-	font-weight: bold;
-}
-
+h1,
 h2 {
 	font-family: Futura, "Lucida Grande", sans-serif;
 	font-weight: bold;
