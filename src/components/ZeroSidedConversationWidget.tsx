@@ -46,6 +46,11 @@ const ZeroSidedConversationWidget = ({
 		<p>
 			{"Sometimes even one-sided conversations require too much human input."}
 		</p>
+		<p>
+			{
+				"This widget uses the text-generation API to iteratively produce a story. In the browser we have a TensorFlow.js toxicity model analyzing the results for toxicity and expressing verbal encouragement or discouragement accordingly."
+			}
+		</p>
 		<Form onSubmit={handleSubmit}>
 			<Form.Group>
 				<Form.Label>{"Select the model:"}</Form.Label>
