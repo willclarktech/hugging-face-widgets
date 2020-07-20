@@ -1,18 +1,18 @@
 {
-	"name": "ts-template",
+	"name": "hugging-face-widgets",
 	"private": true,
 	"version": "0.0.0",
-	"description": "A template repository for TypeScript projects",
+	"description": "Widgets which interact with the Hugging Face inference API",
 	"author": "willclarktech <willclarktech@users.noreply.github.com>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/willclarktech/ts-template.git"
+		"url": "git+https://github.com/willclarktech/hugging-face-widgets.git"
 	},
 	"bugs": {
-		"url": "https://github.com/willclarktech/ts-template/issues"
+		"url": "https://github.com/willclarktech/hugging-face-widgets/issues"
 	},
-	"homepage": "https://github.com/willclarktech/ts-template#readme",
+	"homepage": "https://github.com/willclarktech/hugging-face-widgets#readme",
 	"keywords": [
 		"template",
 		"TypeScript"
