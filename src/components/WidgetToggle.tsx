@@ -6,7 +6,7 @@ import { Button, ButtonProps } from "react-bootstrap";
 const WidgetToggle = (props: ButtonProps): JSX.Element => (
 	<div className="widget-toggle">
 		<Button {...props} variant="warning">
-			{"Switch widget"}
+			{"Toggle widget"}
 		</Button>
 	</div>
 );

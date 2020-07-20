@@ -3,6 +3,7 @@
 .speech {
 	position: relative;
 	max-width: 400px;
+	min-width: 110px;
 	padding: 12px;
 	margin: 1em 0 1em;
 	color: #000;
@@ -35,6 +36,7 @@
 }
 
 .server {
+	min-width: 200px;
 	margin-left: 50px;
 	margin-right: 100px;
 	background: #95feff;

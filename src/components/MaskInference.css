@@ -2,7 +2,7 @@
 	display: inline-block;
 	text-align: center;
 	content: "";
-	width: 100px;
+	width: 60px;
 }
 
 .mask-inference.female::before {
