@@ -3,9 +3,14 @@ import "./ZeroSidedConversationWidget.css";
 import React, { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Alert, Button, ButtonGroup, Form } from "react-bootstrap";
 
+export enum Speaker {
+	Client = "client",
+	Server = "server",
+}
+
 export interface Message {
 	readonly id: number;
-	readonly speaker: "client" | "server";
+	readonly speaker: Speaker;
 	readonly text: string;
 }
 

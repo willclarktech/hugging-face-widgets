@@ -3,8 +3,11 @@ import React, { ChangeEvent, Component, FormEvent, MouseEvent } from "react";
 
 import ZeroSidedConversationWidget, {
 	Message,
+	Speaker,
 } from "../components/ZeroSidedConversationWidget";
 import { assert, post } from "../utils";
+
+export type ZeroSidedConversationWidgetName = "zero-sided-conversation";
 
 interface TextGenerationResult {
 	readonly generated_text: string;
@@ -35,6 +38,8 @@ interface State {
 }
 
 class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
+	public static widgetName: ZeroSidedConversationWidgetName =
+		"zero-sided-conversation";
 	private readonly models: readonly string[];
 	private readonly threshold: number;
 	// TODO: This is an anti-pattern and should be replaced with cancelable promises.
@@ -105,7 +110,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 						...this.state.messages,
 						{
 							id: this.state.serverMessageIndex,
-							speaker: "server",
+							speaker: Speaker.Server,
 							text: reply,
 						},
 					],
@@ -151,7 +156,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					...this.state.messages,
 					{
 						id: this.state.clientMessageIndex,
-						speaker: "client",
+						speaker: Speaker.Server,
 						text: comment,
 					},
 				],

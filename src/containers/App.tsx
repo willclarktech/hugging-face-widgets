@@ -4,10 +4,14 @@ import { ToxicityClassifier } from "@tensorflow-models/toxicity";
 import React, { Component } from "react";
 
 import SwitchButton from "../components/SwitchButton";
-import GenderBiasWidgetContainer from "./GenderBiasWidgetContainer";
-import ZeroSidedConversationWidgetContainer from "./ZeroSidedConversationWidgetContainer";
+import GenderBiasWidgetContainer, {
+	GenderBiasWidgetName,
+} from "./GenderBiasWidgetContainer";
+import ZeroSidedConversationWidgetContainer, {
+	ZeroSidedConversationWidgetName,
+} from "./ZeroSidedConversationWidgetContainer";
 
-type WidgetName = "gender-bias" | "zero-sided-conversation";
+type WidgetName = GenderBiasWidgetName | ZeroSidedConversationWidgetName;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
@@ -23,7 +27,7 @@ class App extends Component<Props, State> {
 		super(props);
 		this.toxicityLabels = ["toxicity"];
 		this.state = {
-			currentWidget: "gender-bias",
+			currentWidget: GenderBiasWidgetContainer.widgetName,
 			localModel: null,
 		};
 	}
@@ -48,12 +52,12 @@ class App extends Component<Props, State> {
 				<SwitchButton
 					onClick={this.setCurrentWidget.bind(
 						this,
-						currentWidget === "gender-bias"
-							? "zero-sided-conversation"
-							: "gender-bias",
+						currentWidget === GenderBiasWidgetContainer.widgetName
+							? ZeroSidedConversationWidgetContainer.widgetName
+							: GenderBiasWidgetContainer.widgetName,
 					)}
 				/>
-				{currentWidget === "gender-bias" ? (
+				{currentWidget === GenderBiasWidgetContainer.widgetName ? (
 					<GenderBiasWidgetContainer />
 				) : (
 					<ZeroSidedConversationWidgetContainer localModel={localModel} />

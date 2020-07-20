@@ -4,6 +4,8 @@ import GenderBiasWidget from "../components/GenderBiasWidget";
 import { InferenceResult } from "../components/Inference";
 import { assert, genderedElementRegExp, mask, post } from "../utils";
 
+export type GenderBiasWidgetName = "gender-bias";
+
 type ApiResult = readonly InferenceResult[];
 
 const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
@@ -24,21 +26,22 @@ interface State {
 }
 
 class GenderBiasWidgetContainer extends Component<Props, State> {
+	public static widgetName: GenderBiasWidgetName = "gender-bias";
 	private models: readonly string[];
 
 	constructor(props: Props) {
 		super(props);
-		this.state = {
-			text: "The coding interview went really well. We gave her the job.",
-			model: "distilroberta-base",
-			errorMessage: null,
-			apiResult: null,
-			loading: false,
-		};
 		this.models = ["distilroberta-base", "camembert-base"];
 		this.handleTextChange = this.handleTextChange.bind(this);
 		this.handleModelChange = this.handleModelChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.state = {
+			text: "The coding interview went really well. We gave her the job.",
+			model: this.models[0],
+			errorMessage: null,
+			apiResult: null,
+			loading: false,
+		};
 	}
 
 	handleTextChange(event: ChangeEvent<HTMLInputElement>): void {
