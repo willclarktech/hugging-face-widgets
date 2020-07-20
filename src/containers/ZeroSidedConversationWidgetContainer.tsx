@@ -52,7 +52,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.models = ["gpt2", "openai-gpt"];
-		this.threshold = 0.001;
+		this.threshold = 0.002;
 		this._isMounted = false;
 		this.state = {
 			initialText: "Once upon a time there were two very special AIs.",
