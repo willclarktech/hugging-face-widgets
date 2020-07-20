@@ -94,8 +94,8 @@ const ZeroSidedConversationWidget = ({
 				<h2>{"Your zero-effort conversation:"}</h2>
 				<ol>
 					{messages.map(({ speaker, text, id }) => (
-						<li key={`${speaker}${id}`} className={speaker}>
-							{text}
+						<li key={`${speaker}${id}`}>
+							<div className={`speech ${speaker}`}>{text}</div>
 						</li>
 					))}
 				</ol>
