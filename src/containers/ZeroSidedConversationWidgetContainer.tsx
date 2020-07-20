@@ -1,4 +1,5 @@
-import React, { ChangeEvent, Component, FormEvent } from "react";
+import { ToxicityClassifier } from "@tensorflow-models/toxicity";
+import React, { ChangeEvent, Component, FormEvent, MouseEvent } from "react";
 
 import ZeroSidedConversationWidget, {
 	Message,
@@ -19,61 +20,77 @@ const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
 	);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
+interface Props {
+	readonly localModel: ToxicityClassifier | null;
+}
+
 interface State {
 	readonly initialText: string;
-	readonly model: string;
+	readonly remoteModel: string;
 	readonly errorMessage: string | null;
 	readonly messages: readonly Message[];
-	readonly loading: boolean;
+	readonly paused: boolean;
+	readonly serverMessageIndex: number;
+	readonly clientMessageIndex: number;
 }
 
 class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
-	private models: readonly string[];
+	private readonly models: readonly string[];
+	private readonly threshold: number;
+	// TODO: This is an anti-pattern and should be replaced with cancelable promises.
+	private _isMounted: boolean;
 
 	constructor(props: Props) {
 		super(props);
+		this.models = ["gpt2", "openai-gpt"];
+		this.threshold = 0.001;
+		this._isMounted = false;
 		this.state = {
 			initialText: "Once upon a time there were two very special AIs.",
-			model: "gpt2",
+			remoteModel: "gpt2",
 			errorMessage: null,
 			messages: [],
-			loading: false,
+			paused: true,
+			serverMessageIndex: 0,
+			clientMessageIndex: 0,
 		};
-		this.models = ["gpt2", "openai-gpt"];
 
 		this.handleTextChange = this.handleTextChange.bind(this);
-		this.handleModelChange = this.handleModelChange.bind(this);
+		this.handleRemoteModelChange = this.handleRemoteModelChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handlePause = this.handlePause.bind(this);
+		this.handleReset = this.handleReset.bind(this);
 	}
 
-	handleTextChange(event: ChangeEvent<HTMLInputElement>): void {
-		this.setState({ initialText: event.target.value });
+	componentDidMount(): void {
+		this._isMounted = true;
 	}
 
-	handleModelChange(event: ChangeEvent<HTMLSelectElement>): void {
-		this.setState({ model: event.target.value });
+	componentWillUnmount(): void {
+		this._isMounted = false;
 	}
 
-	handleSubmit(event: FormEvent): void {
-		event.preventDefault();
+	getRemoteMessage(): void {
 		this.setState({
-			// messages: [],
-			loading: true,
+			paused: false,
 		});
-
+		const { initialText, messages, remoteModel } = this.state;
+		const serverMessages = messages.filter(
+			({ speaker }) => speaker === "server",
+		);
 		const text =
-			this.state.messages.length === 0
-				? this.state.initialText
-				: this.state.messages[this.state.messages.length - 1].text;
+			serverMessages.length === 0
+				? initialText
+				: serverMessages[serverMessages.length - 1].text;
 		const body = `"${text}"`;
-		post(`https://api-inference.huggingface.co/models/${this.state.model}`, {
+		post(`https://api-inference.huggingface.co/models/${remoteModel}`, {
 			body,
 		}).then(
 			(apiResult) => {
-				console.log(apiResult);
-				this.setState({ loading: false });
+				if (!this._isMounted) {
+					return;
+				}
+
 				assert(isApiResult(apiResult));
 				const rawReply = apiResult[0].generated_text;
 				const reply = rawReply
@@ -82,22 +99,109 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					.replace(/"/g, "'")
 					.replace(/\s[^\s]+?$/, "")
 					.trim();
-				console.log(reply);
+
 				this.setState({
 					messages: [
 						...this.state.messages,
-						{ speaker: "server", text: reply },
+						{
+							id: this.state.serverMessageIndex,
+							speaker: "server",
+							text: reply,
+						},
 					],
+					serverMessageIndex: this.state.serverMessageIndex + 1,
 					errorMessage: null,
 				});
+
+				return this.state.paused ? null : this.getLocalMessage();
 			},
 			(error: Error) => {
+				if (!this._isMounted) {
+					return;
+				}
 				this.setState({
-					loading: false,
 					errorMessage: error.message,
 				});
 			},
 		);
+	}
+
+	getLocalMessage(): void {
+		const { messages } = this.state;
+		const { localModel } = this.props;
+		if (!localModel) {
+			throw new Error("Local model not yet loaded");
+		}
+
+		const serverMessages = messages.filter(
+			({ speaker }) => speaker === "server",
+		);
+		const mostRecentServerMessage = serverMessages[serverMessages.length - 1];
+		localModel.classify(mostRecentServerMessage.text).then((classification) => {
+			if (!this._isMounted) {
+				return;
+			}
+			const isToxic =
+				classification[0].results[0].probabilities[1] > this.threshold;
+			const comment = isToxic
+				? "I don’t like where this is going."
+				: "This is good stuff.";
+			this.setState({
+				messages: [
+					...this.state.messages,
+					{
+						id: this.state.clientMessageIndex,
+						speaker: "client",
+						text: comment,
+					},
+				],
+				clientMessageIndex: this.state.clientMessageIndex + 1,
+			});
+
+			return this.state.paused ? null : this.getRemoteMessage();
+		});
+	}
+
+	handleTextChange(event: ChangeEvent<HTMLInputElement>): void {
+		this.setState({ initialText: event.target.value });
+	}
+
+	handleRemoteModelChange(event: ChangeEvent<HTMLSelectElement>): void {
+		this.setState({ remoteModel: event.target.value });
+	}
+
+	handleSubmit(event: FormEvent): void {
+		event.preventDefault();
+		this.setState({
+			paused: false,
+		});
+
+		const mostRecentMessage = this.state.messages[
+			this.state.messages.length - 1
+		];
+
+		return mostRecentMessage === undefined ||
+			mostRecentMessage.speaker === "client"
+			? this.getRemoteMessage()
+			: this.getLocalMessage();
+	}
+
+	handlePause(event: MouseEvent<HTMLElement>): void {
+		event.preventDefault();
+		this.setState({
+			paused: true,
+		});
+	}
+
+	handleReset(event: MouseEvent<HTMLElement>): void {
+		event.preventDefault();
+		this.setState({
+			errorMessage: null,
+			messages: [],
+			paused: true,
+			serverMessageIndex: 0,
+			clientMessageIndex: 0,
+		});
 	}
 
 	render(): JSX.Element {
@@ -105,12 +209,15 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 			<ZeroSidedConversationWidget
 				models={this.models}
 				initialText={this.state.initialText}
-				loading={this.state.loading}
+				loadingLocalModel={this.props.localModel === null}
+				paused={this.state.paused}
 				messages={this.state.messages}
 				errorMessage={this.state.errorMessage}
 				onTextChange={this.handleTextChange}
-				onModelChange={this.handleModelChange}
+				onModelChange={this.handleRemoteModelChange}
 				onSubmit={this.handleSubmit}
+				onPause={this.handlePause}
+				onReset={this.handleReset}
 			/>
 		);
 	}

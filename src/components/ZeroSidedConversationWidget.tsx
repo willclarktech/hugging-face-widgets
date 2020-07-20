@@ -1,9 +1,10 @@
 import "./ZeroSidedConversationWidget.css";
 
-import React, { ChangeEvent, FormEvent } from "react";
-import { Alert, Button, Form } from "react-bootstrap";
+import React, { ChangeEvent, FormEvent, MouseEvent } from "react";
+import { Alert, Button, ButtonGroup, Form } from "react-bootstrap";
 
 export interface Message {
+	readonly id: number;
 	readonly speaker: "client" | "server";
 	readonly text: string;
 }
@@ -11,23 +12,29 @@ export interface Message {
 interface Props {
 	readonly models: readonly string[];
 	readonly initialText: string;
-	readonly loading: boolean;
+	readonly loadingLocalModel: boolean;
+	readonly paused: boolean;
 	readonly messages: readonly Message[];
 	readonly errorMessage: string | null;
 	readonly onTextChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	readonly onModelChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 	readonly onSubmit: (event: FormEvent) => void;
+	readonly onPause: (event: MouseEvent<HTMLElement>) => void;
+	readonly onReset: (event: MouseEvent<HTMLElement>) => void;
 }
 
 const ZeroSidedConversationWidget = ({
 	models,
 	initialText,
-	loading,
+	loadingLocalModel,
+	paused,
 	errorMessage,
 	messages,
 	onTextChange: handleTextChange,
 	onModelChange: handleModelChange,
 	onSubmit: handleSubmit,
+	onPause: handlePause,
+	onReset: handleReset,
 }: Props): JSX.Element => (
 	<div className="zero-sided-conversation-widget">
 		<h1>{"The zero-sided conversation app"}</h1>
@@ -55,9 +62,29 @@ const ZeroSidedConversationWidget = ({
 					onChange={handleTextChange}
 				/>
 			</Form.Group>
-			<Button variant="dark" type="submit" disabled={loading}>
-				{loading ? "Loading..." : "Converse"}
-			</Button>
+			<ButtonGroup>
+				<Button
+					variant="dark"
+					onClick={handleReset}
+					disabled={loadingLocalModel || !paused || messages.length === 0}
+				>
+					{"Reset"}
+				</Button>
+				<Button variant="danger" onClick={handlePause} disabled={paused}>
+					{"Pause"}
+				</Button>
+				<Button
+					variant="primary"
+					type="submit"
+					disabled={loadingLocalModel || !paused}
+				>
+					{loadingLocalModel
+						? "Loading local model (slow!)..."
+						: paused
+						? "Converse"
+						: "Conversing..."}
+				</Button>
+			</ButtonGroup>
 		</Form>
 		{errorMessage && <Alert variant="danger">{`Error: ${errorMessage}`}</Alert>}
 		{messages.length === 0 ? (
@@ -66,8 +93,8 @@ const ZeroSidedConversationWidget = ({
 			<div>
 				<h2>{"Your zero-effort conversation:"}</h2>
 				<ol>
-					{messages.map(({ speaker, text }) => (
-						<li key={text} className={speaker}>
+					{messages.map(({ speaker, text, id }) => (
+						<li key={`${speaker}${id}`} className={speaker}>
 							{text}
 						</li>
 					))}

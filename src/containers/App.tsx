@@ -1,3 +1,6 @@
+import "@tensorflow/tfjs-backend-webgl";
+
+import { ToxicityClassifier } from "@tensorflow-models/toxicity";
 import React, { Component } from "react";
 
 import SwitchButton from "../components/SwitchButton";
@@ -10,14 +13,28 @@ type WidgetName = "gender-bias" | "zero-sided-conversation";
 interface Props {}
 interface State {
 	readonly currentWidget: WidgetName;
+	readonly localModel: ToxicityClassifier | null;
 }
 
 class App extends Component<Props, State> {
+	private toxicityLabels: readonly string[];
+
 	constructor(props: Props) {
 		super(props);
+		this.toxicityLabels = ["toxicity"];
 		this.state = {
 			currentWidget: "gender-bias",
+			localModel: null,
 		};
+	}
+
+	componentDidMount(): void {
+		const localModel = new ToxicityClassifier(undefined, [
+			...this.toxicityLabels,
+		]);
+		localModel.load().then(() => {
+			this.setState({ localModel });
+		});
 	}
 
 	setCurrentWidget(widgetName: WidgetName): void {
@@ -25,20 +42,21 @@ class App extends Component<Props, State> {
 	}
 
 	render(): JSX.Element {
+		const { currentWidget, localModel } = this.state;
 		return (
 			<div>
 				<SwitchButton
 					onClick={this.setCurrentWidget.bind(
 						this,
-						this.state.currentWidget === "gender-bias"
+						currentWidget === "gender-bias"
 							? "zero-sided-conversation"
 							: "gender-bias",
 					)}
 				/>
-				{this.state.currentWidget === "gender-bias" ? (
+				{currentWidget === "gender-bias" ? (
 					<GenderBiasWidgetContainer />
 				) : (
-					<ZeroSidedConversationWidgetContainer />
+					<ZeroSidedConversationWidgetContainer localModel={localModel} />
 				)}
 			</div>
 		);
