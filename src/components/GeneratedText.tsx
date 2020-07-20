@@ -11,11 +11,12 @@ export interface Props {
 	readonly speaker: Speaker;
 	readonly text: string;
 	readonly id: string;
+	readonly toxic: boolean;
 }
 
-const GeneratedText = ({ speaker, text, id }: Props): JSX.Element => (
+const GeneratedText = ({ speaker, text, id, toxic }: Props): JSX.Element => (
 	<li key={id}>
-		<div className={`speech ${speaker}`}>{text}</div>
+		<div className={`speech ${speaker} ${toxic ? "toxic" : ""}`}>{text}</div>
 	</li>
 );
 

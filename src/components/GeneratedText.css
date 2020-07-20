@@ -34,6 +34,10 @@
 	border-color: transparent #95ff95;
 }
 
+.speech.client.toxic:after {
+	border-color: transparent #ff9595;
+}
+
 .server {
 	margin-left: 50px;
 	margin-right: 100px;
@@ -46,4 +50,8 @@
 	margin-right: 50px;
 	text-align: right;
 	background: #95ff95;
+}
+
+.client.toxic {
+	background: #ff9595;
 }
