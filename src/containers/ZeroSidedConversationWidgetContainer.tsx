@@ -23,6 +23,9 @@ const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
 	);
 };
 
+const sanitizeText = (text: string): string =>
+	text.replace(/\n/g, " ").replace(/"/g, "'").trim();
+
 interface Props {
 	readonly localModel: ToxicityClassifier | null;
 }
@@ -81,13 +84,13 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		});
 		const { initialText, messages, remoteModel } = this.state;
 		const serverMessages = messages.filter(
-			({ speaker }) => speaker === "server",
+			({ speaker }) => speaker === Speaker.Server,
 		);
 		const text =
 			serverMessages.length === 0
 				? initialText
 				: serverMessages[serverMessages.length - 1].text;
-		const body = `"${text}"`;
+		const body = `"${sanitizeText(text)}"`;
 		post(`https://api-inference.huggingface.co/models/${remoteModel}`, {
 			body,
 		}).then(
@@ -98,12 +101,9 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 
 				assert(isApiResult(apiResult));
 				const rawReply = apiResult[0].generated_text;
-				const reply = rawReply
-					.slice(text.length)
-					.replace(/\n/g, " ")
-					.replace(/"/g, "'")
-					.replace(/\s[^\s]+?$/, "")
-					.trim();
+				const reply = sanitizeText(
+					rawReply.slice(text.length).replace(/\s[^\s]+?$/, ""),
+				);
 
 				this.setState({
 					messages: [
@@ -125,6 +125,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					return;
 				}
 				this.setState({
+					paused: true,
 					errorMessage: error.message,
 				});
 			},
@@ -139,7 +140,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		}
 
 		const serverMessages = messages.filter(
-			({ speaker }) => speaker === "server",
+			({ speaker }) => speaker === Speaker.Server,
 		);
 		const mostRecentServerMessage = serverMessages[serverMessages.length - 1];
 		localModel.classify(mostRecentServerMessage.text).then((classification) => {
@@ -186,7 +187,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		];
 
 		return mostRecentMessage === undefined ||
-			mostRecentMessage.speaker === "client"
+			mostRecentMessage.speaker === Speaker.Client
 			? this.getRemoteMessage()
 			: this.getLocalMessage();
 	}
