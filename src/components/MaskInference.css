@@ -1,8 +1,8 @@
 .mask-inference::before {
 	display: inline-block;
 	text-align: center;
-	content: " ";
-	width: 50px;
+	content: "";
+	width: 100px;
 }
 
 .mask-inference.female::before {

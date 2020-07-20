@@ -22,7 +22,7 @@ const MaskInference = ({ score, token, token_str }: Props): JSX.Element => {
 		? "male"
 		: "";
 	const className = `mask-inference ${genderClassName}`;
-	const inlineStyle = { fontSize: `${scorePercentage * 5 + 100}%` };
+	const inlineStyle = { fontSize: `${scorePercentage * 10 + 100}%` };
 	return (
 		<li key={token} className={className} style={inlineStyle}>
 			{`${processedTokenStr} (${scorePercentage}%)`}

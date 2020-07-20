@@ -4,6 +4,6 @@ import "./index.css";
 import React from "react";
 import { render } from "react-dom";
 
-import App from "./containers/AppContainer";
+import AppContainer from "./containers/AppContainer";
 
-render(<App />, document.getElementById("app"));
+render(<AppContainer />, document.getElementById("app"));

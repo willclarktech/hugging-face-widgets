@@ -6,7 +6,7 @@ import {
 	Speaker,
 } from "../components/GeneratedText";
 import ZeroSidedConversationWidget from "../components/ZeroSidedConversationWidget";
-import { assert, post } from "../utils";
+import { assert, post, sanitizeText } from "../utils";
 
 export type ZeroSidedConversationWidgetName = "zero-sided-conversation";
 
@@ -16,16 +16,10 @@ interface TextGenerationResult {
 
 type ApiResult = readonly TextGenerationResult[];
 
-const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
-	return (
-		Array.isArray(apiResult as ApiResult) &&
-		(apiResult as ApiResult).length === 1 &&
-		typeof (apiResult as ApiResult)[0].generated_text === "string"
-	);
-};
-
-const sanitizeText = (text: string): string =>
-	text.replace(/\n/g, " ").replace(/"/g, "'").trim();
+const isApiResult = (apiResult: unknown): apiResult is ApiResult =>
+	Array.isArray(apiResult) &&
+	apiResult.length === 1 &&
+	typeof apiResult[0].generated_text === "string";
 
 interface Props {
 	readonly localModel: ToxicityClassifier | null;
@@ -36,7 +30,7 @@ interface State {
 	readonly remoteModel: string;
 	readonly errorMessage: string | null;
 	readonly messages: readonly GeneratedTextProps[];
-	readonly paused: boolean;
+	readonly running: boolean;
 	readonly serverMessageIndex: number;
 	readonly clientMessageIndex: number;
 }
@@ -44,22 +38,24 @@ interface State {
 class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 	public static widgetName: ZeroSidedConversationWidgetName =
 		"zero-sided-conversation";
-	private readonly models: readonly string[];
+	private readonly remoteModels: readonly string[];
 	private readonly threshold: number;
-	// TODO: This is an anti-pattern and should be replaced with cancelable promises.
-	private _isMounted: boolean;
+	private readonly encouragingComment: string;
+	private readonly discouragingComment: string;
 
 	constructor(props: Props) {
 		super(props);
-		this.models = ["gpt2", "openai-gpt"];
+		this.remoteModels = ["gpt2", "openai-gpt"];
 		this.threshold = 0.002;
-		this._isMounted = false;
+		this.encouragingComment = "This is good stuff.";
+		this.discouragingComment = "I don’t like where this is going.";
+
 		this.state = {
 			initialText: "Once upon a time there were two very special AIs.",
-			remoteModel: "gpt2",
+			remoteModel: this.remoteModels[0],
 			errorMessage: null,
 			messages: [],
-			paused: true,
+			running: false,
 			serverMessageIndex: 0,
 			clientMessageIndex: 0,
 		};
@@ -71,18 +67,11 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		this.handleReset = this.handleReset.bind(this);
 	}
 
-	componentDidMount(): void {
-		this._isMounted = true;
-	}
-
 	componentWillUnmount(): void {
-		this._isMounted = false;
+		this.setState({ running: false });
 	}
 
 	getRemoteMessage(): void {
-		this.setState({
-			paused: false,
-		});
 		const { initialText, messages, remoteModel } = this.state;
 		const serverMessages = messages.filter(
 			({ speaker }) => speaker === Speaker.Server,
@@ -96,10 +85,6 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 			body,
 		}).then(
 			(apiResult) => {
-				if (!this._isMounted) {
-					return;
-				}
-
 				assert(isApiResult(apiResult));
 				const rawReply = apiResult[0].generated_text;
 				const reply = sanitizeText(
@@ -120,14 +105,11 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					errorMessage: null,
 				});
 
-				return this.state.paused ? null : this.getLocalMessage();
+				return this.state.running ? this.getLocalMessage() : null;
 			},
 			(error: Error) => {
-				if (!this._isMounted) {
-					return;
-				}
 				this.setState({
-					paused: true,
+					running: false,
 					errorMessage: error.message,
 				});
 			},
@@ -146,14 +128,11 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		);
 		const mostRecentServerMessage = serverMessages[serverMessages.length - 1];
 		localModel.classify(mostRecentServerMessage.text).then((classification) => {
-			if (!this._isMounted) {
-				return;
-			}
 			const isToxic =
 				classification[0].results[0].probabilities[1] > this.threshold;
 			const comment = isToxic
-				? "I don’t like where this is going."
-				: "This is good stuff.";
+				? this.discouragingComment
+				: this.encouragingComment;
 			this.setState({
 				messages: [
 					...this.state.messages,
@@ -167,7 +146,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 				clientMessageIndex: this.state.clientMessageIndex + 1,
 			});
 
-			return this.state.paused ? null : this.getRemoteMessage();
+			return this.state.running ? this.getRemoteMessage() : null;
 		});
 	}
 
@@ -182,7 +161,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 	handleSubmit(event: FormEvent): void {
 		event.preventDefault();
 		this.setState({
-			paused: false,
+			running: true,
 		});
 
 		const mostRecentMessage = this.state.messages[
@@ -198,7 +177,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 	handlePause(event: MouseEvent<HTMLElement>): void {
 		event.preventDefault();
 		this.setState({
-			paused: true,
+			running: false,
 		});
 	}
 
@@ -207,7 +186,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 		this.setState({
 			errorMessage: null,
 			messages: [],
-			paused: true,
+			running: false,
 			serverMessageIndex: 0,
 			clientMessageIndex: 0,
 		});
@@ -216,10 +195,10 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 	render(): JSX.Element {
 		return (
 			<ZeroSidedConversationWidget
-				models={this.models}
+				models={this.remoteModels}
 				initialText={this.state.initialText}
 				loadingLocalModel={this.props.localModel === null}
-				paused={this.state.paused}
+				running={this.state.running}
 				messages={this.state.messages}
 				errorMessage={this.state.errorMessage}
 				onTextChange={this.handleTextChange}

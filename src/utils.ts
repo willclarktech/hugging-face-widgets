@@ -33,3 +33,6 @@ export const genderedElementRegExp = new RegExp(
 
 export const mask = (text: string): string =>
 	text.replace(genderedElementRegExp, " <mask> ");
+
+export const sanitizeText = (text: string): string =>
+	text.replace(/\n/g, " ").replace(/"/g, "'").trim();

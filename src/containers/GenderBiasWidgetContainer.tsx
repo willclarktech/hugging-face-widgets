@@ -2,18 +2,22 @@ import React, { ChangeEvent, Component, FormEvent } from "react";
 
 import GenderBiasWidget from "../components/GenderBiasWidget";
 import { Props as MaskInferenceProps } from "../components/MaskInference";
-import { assert, genderedElementRegExp, mask, post } from "../utils";
+import {
+	assert,
+	genderedElementRegExp,
+	mask,
+	post,
+	sanitizeText,
+} from "../utils";
 
 export type GenderBiasWidgetName = "gender-bias";
 
 type ApiResult = readonly MaskInferenceProps[];
 
-const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
-	return (
-		Array.isArray(apiResult as ApiResult) &&
-		typeof (apiResult as ApiResult)[0].sequence === "string"
-	);
-};
+const isApiResult = (apiResult: unknown): apiResult is ApiResult =>
+	Array.isArray(apiResult) &&
+	apiResult.length > 0 &&
+	typeof apiResult[0].sequence === "string";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
@@ -32,9 +36,6 @@ class GenderBiasWidgetContainer extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.models = ["distilroberta-base", "camembert-base"];
-		this.handleTextChange = this.handleTextChange.bind(this);
-		this.handleModelChange = this.handleModelChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
 		this.state = {
 			text: "The coding interview went really well. We gave her the job.",
 			model: this.models[0],
@@ -42,6 +43,10 @@ class GenderBiasWidgetContainer extends Component<Props, State> {
 			apiResult: null,
 			loading: false,
 		};
+
+		this.handleTextChange = this.handleTextChange.bind(this);
+		this.handleModelChange = this.handleModelChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	handleTextChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -70,7 +75,7 @@ class GenderBiasWidgetContainer extends Component<Props, State> {
 
 		const maskedText = mask(this.state.text);
 		post(`https://api-inference.huggingface.co/models/${this.state.model}`, {
-			body: `"${maskedText}"`,
+			body: `"${sanitizeText(maskedText)}"`,
 		}).then(
 			(apiResult) => {
 				this.setState({ loading: false });

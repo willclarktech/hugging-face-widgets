@@ -9,7 +9,7 @@ interface Props {
 	readonly models: readonly string[];
 	readonly initialText: string;
 	readonly loadingLocalModel: boolean;
-	readonly paused: boolean;
+	readonly running: boolean;
 	readonly messages: readonly GeneratedTextProps[];
 	readonly errorMessage: string | null;
 	readonly onTextChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -23,7 +23,7 @@ const ZeroSidedConversationWidget = ({
 	models,
 	initialText,
 	loadingLocalModel,
-	paused,
+	running,
 	errorMessage,
 	messages,
 	onTextChange: handleTextChange,
@@ -67,30 +67,28 @@ const ZeroSidedConversationWidget = ({
 				<Button
 					variant="dark"
 					onClick={handleReset}
-					disabled={loadingLocalModel || !paused || messages.length === 0}
+					disabled={loadingLocalModel || running || messages.length === 0}
 				>
 					{"Reset"}
 				</Button>
-				<Button variant="danger" onClick={handlePause} disabled={paused}>
+				<Button variant="danger" onClick={handlePause} disabled={!running}>
 					{"Pause"}
 				</Button>
 				<Button
 					variant="primary"
 					type="submit"
-					disabled={loadingLocalModel || !paused}
+					disabled={loadingLocalModel || running}
 				>
 					{loadingLocalModel
 						? "Loading local model (slow!)..."
-						: paused
-						? "Converse"
-						: "Conversing..."}
+						: running
+						? "Conversing..."
+						: "Converse"}
 				</Button>
 			</ButtonGroup>
 		</Form>
 		{errorMessage && <Alert variant="danger">{`Error: ${errorMessage}`}</Alert>}
-		{messages.length === 0 ? (
-			""
-		) : (
+		{messages.length > 0 && (
 			<div>
 				<h2>{"Your zero-effort conversation:"}</h2>
 				<ol>{messages.map(GeneratedText)}</ol>
