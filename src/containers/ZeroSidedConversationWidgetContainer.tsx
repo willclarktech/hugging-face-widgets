@@ -156,7 +156,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					...this.state.messages,
 					{
 						id: this.state.clientMessageIndex,
-						speaker: Speaker.Server,
+						speaker: Speaker.Client,
 						text: comment,
 					},
 				],
