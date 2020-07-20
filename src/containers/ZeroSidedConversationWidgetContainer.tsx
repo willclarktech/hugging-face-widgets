@@ -1,10 +1,11 @@
 import { ToxicityClassifier } from "@tensorflow-models/toxicity";
 import React, { ChangeEvent, Component, FormEvent, MouseEvent } from "react";
 
-import ZeroSidedConversationWidget, {
-	Message,
+import {
+	Props as GeneratedTextProps,
 	Speaker,
-} from "../components/ZeroSidedConversationWidget";
+} from "../components/GeneratedText";
+import ZeroSidedConversationWidget from "../components/ZeroSidedConversationWidget";
 import { assert, post } from "../utils";
 
 export type ZeroSidedConversationWidgetName = "zero-sided-conversation";
@@ -34,7 +35,7 @@ interface State {
 	readonly initialText: string;
 	readonly remoteModel: string;
 	readonly errorMessage: string | null;
-	readonly messages: readonly Message[];
+	readonly messages: readonly GeneratedTextProps[];
 	readonly paused: boolean;
 	readonly serverMessageIndex: number;
 	readonly clientMessageIndex: number;
@@ -109,7 +110,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 					messages: [
 						...this.state.messages,
 						{
-							id: this.state.serverMessageIndex,
+							id: `server${this.state.serverMessageIndex}`,
 							speaker: Speaker.Server,
 							text: reply,
 						},
@@ -156,7 +157,7 @@ class ZeroSidedConversationWidgetContainer extends Component<Props, State> {
 				messages: [
 					...this.state.messages,
 					{
-						id: this.state.clientMessageIndex,
+						id: `client${this.state.clientMessageIndex}`,
 						speaker: Speaker.Client,
 						text: comment,
 					},

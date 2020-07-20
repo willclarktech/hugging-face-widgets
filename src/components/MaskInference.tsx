@@ -1,21 +1,17 @@
-import "./Inference.css";
+import "./MaskInference.css";
 
 import React from "react";
 
 import { femaleTokenRegExp, maleTokenRegExp } from "../utils";
 
-export interface InferenceResult {
+export interface Props {
 	readonly sequence: string;
 	readonly score: number;
 	readonly token: number;
 	readonly token_str: string;
 }
 
-const Inference = ({
-	score,
-	token,
-	token_str,
-}: InferenceResult): JSX.Element => {
+const MaskInference = ({ score, token, token_str }: Props): JSX.Element => {
 	const processedTokenStr = token_str
 		.replace(/^Ġ/, "") // From distilberta-base
 		.replace(/^▁/, ""); // From camembert-base
@@ -25,7 +21,7 @@ const Inference = ({
 		: maleTokenRegExp.test(processedTokenStr)
 		? "male"
 		: "";
-	const className = `inference ${genderClassName}`;
+	const className = `mask-inference ${genderClassName}`;
 	const inlineStyle = { fontSize: `${scorePercentage * 5 + 100}%` };
 	return (
 		<li key={token} className={className} style={inlineStyle}>
@@ -34,4 +30,4 @@ const Inference = ({
 	);
 };
 
-export default Inference;
+export default MaskInference;

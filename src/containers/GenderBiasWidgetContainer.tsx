@@ -1,12 +1,12 @@
 import React, { ChangeEvent, Component, FormEvent } from "react";
 
 import GenderBiasWidget from "../components/GenderBiasWidget";
-import { InferenceResult } from "../components/Inference";
+import { Props as MaskInferenceProps } from "../components/MaskInference";
 import { assert, genderedElementRegExp, mask, post } from "../utils";
 
 export type GenderBiasWidgetName = "gender-bias";
 
-type ApiResult = readonly InferenceResult[];
+type ApiResult = readonly MaskInferenceProps[];
 
 const isApiResult = (apiResult: unknown): apiResult is ApiResult => {
 	return (

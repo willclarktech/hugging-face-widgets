@@ -1,56 +1,5 @@
 .zero-sided-conversation-widget {
 	min-height: 100vh;
 	padding: 48px;
-	background: #ff6600;
 	background: #666666;
-}
-
-/* Speech bubbles adapted from https://codepen.io/mchernin34/pen/ojXvLq */
-
-.speech {
-	position: relative;
-	max-width: 400px;
-	padding: 15px;
-	margin: 1em 0 1em;
-	color: #000;
-	border-radius: 10px;
-}
-
-.speech:after {
-	content: "";
-	position: absolute;
-	bottom: 15px;
-	left: 50px;
-	border-width: 15px 15px 0;
-	border-style: solid;
-	display: block;
-}
-
-.speech.server:after {
-	left: -50px;
-	top: auto;
-	border-width: 10px 50px 10px 0;
-	border-color: transparent #95feff;
-}
-
-.speech.client:after {
-	right: -50px;
-	top: auto;
-	left: auto;
-	border-width: 10px 0 10px 50px;
-	border-color: transparent #95ff95;
-}
-
-.server {
-	margin-left: 50px;
-	margin-right: 100px;
-	background: #95feff;
-}
-
-.client {
-	max-width: 310px;
-	margin-left: 190px;
-	margin-right: 50px;
-	text-align: right;
-	background: #95ff95;
 }

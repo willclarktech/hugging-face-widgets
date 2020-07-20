@@ -4,14 +4,14 @@ import React, { ChangeEvent, FormEvent } from "react";
 import { Alert, Button, Form } from "react-bootstrap";
 
 import { mask } from "../utils";
-import InferenceComponent, { InferenceResult } from "./Inference";
+import MaskInference, { Props as MaskInferenceProps } from "./MaskInference";
 
 interface Props {
 	readonly models: readonly string[];
 	readonly text: string;
 	readonly loading: boolean;
 	readonly errorMessage: string | null;
-	readonly results: readonly InferenceResult[] | null;
+	readonly results: readonly MaskInferenceProps[] | null;
 	readonly onTextChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	readonly onModelChange: (event: ChangeEvent<HTMLSelectElement>) => void;
 	readonly onSubmit: (event: FormEvent) => void;
@@ -68,7 +68,7 @@ const GenderBiasWidget = ({
 			{results && (
 				<div>
 					<h2>{"This model suggests..."}</h2>
-					<ol>{results.map(InferenceComponent)}</ol>
+					<ol>{results.map(MaskInference)}</ol>
 				</div>
 			)}
 		</div>

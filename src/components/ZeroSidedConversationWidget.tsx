@@ -3,23 +3,14 @@ import "./ZeroSidedConversationWidget.css";
 import React, { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { Alert, Button, ButtonGroup, Form } from "react-bootstrap";
 
-export enum Speaker {
-	Client = "client",
-	Server = "server",
-}
-
-export interface Message {
-	readonly id: number;
-	readonly speaker: Speaker;
-	readonly text: string;
-}
+import GeneratedText, { Props as GeneratedTextProps } from "./GeneratedText";
 
 interface Props {
 	readonly models: readonly string[];
 	readonly initialText: string;
 	readonly loadingLocalModel: boolean;
 	readonly paused: boolean;
-	readonly messages: readonly Message[];
+	readonly messages: readonly GeneratedTextProps[];
 	readonly errorMessage: string | null;
 	readonly onTextChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	readonly onModelChange: (event: ChangeEvent<HTMLSelectElement>) => void;
@@ -102,13 +93,7 @@ const ZeroSidedConversationWidget = ({
 		) : (
 			<div>
 				<h2>{"Your zero-effort conversation:"}</h2>
-				<ol>
-					{messages.map(({ speaker, text, id }) => (
-						<li key={`${speaker}${id}`}>
-							<div className={`speech ${speaker}`}>{text}</div>
-						</li>
-					))}
-				</ol>
+				<ol>{messages.map(GeneratedText)}</ol>
 			</div>
 		)}
 	</div>
